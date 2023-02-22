@@ -42,6 +42,19 @@ const App = () => {
     .then(response => response.json())
     .then(data => setWeather(data.current_weather))
     .then(data => setWeatherState(true))
+    if (weather.weathercode === 0) {
+      setImage('http://openweathermap.org/img/wn/01d.png')
+    } else if (weather.weathercode === 1 || weather.weathercode === 2 || weather.weathercode === 3) {
+        setImage('http://openweathermap.org/img/wn/02d.png')
+    } else if (weather.weathercode === 45 || weather.weathercode === 48) {
+      setImage('http://openweathermap.org/img/wn/50d.png')
+    } else if (weather.weathercode === 51 || weather.weathercode === 53 || weather.weathercode === 55 || weather.weathercode === 56 || weather.weathercode === 57 || weather.weathercode === 61 || weather.weathercode === 63 || weather.weathercode === 65 || weather.weathercode === 66 || weather.weathercode === 67 || weather.weathercode === 80 || weather.weathercode === 81 || weather.weathercode === 82 ) {
+      setImage('http://openweathermap.org/img/wn/09d.png')
+    } else if (weather.weathercode === 71 || weather.weathercode === 73 || weather.weathercode === 75 || weather.weathercode === 77 || weather.weathercode === 85 || weather.weathercode === 86) {
+      setImage('http://openweathermap.org/img/wn/13d.png')
+    } else if ( weather.weathercode === 95 || weather.weathercode === 96 || weather.weathercode === 99) {
+      setImage('http://openweathermap.org/img/wn/11d.png')
+    }
   }
 
   const onUnitChange = ( ) => {
@@ -97,19 +110,20 @@ const App = () => {
           </div>
             {weatherState && <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-64 w-96 align-middle text-white">
               <div className="flex flex-col mt-[45px]">
-              <h1 className="font-bold mr-[170px] text-[50px] relative">
-                {weather.temperature}°
+              <h1 className="font-bold content-center text-[50px]">
+                {weather.temperature}° 
               </h1>
-              <div className="flex flex-col absolute left-[50px] top-[3px]">
+              <img src={image} alt="" className="absolute mt-[-5px] ml-[250px] w-[90px]"/>
+              <div className="flex flex-col absolute top-[3px] ml-10">
                 <h1 className="font-bold text-3xl">
                   {dataWeather.name}
                 </h1>
-                <h1 className="font-thin mt-[-8px] ml-[-70px]">
+                <h1 className="font-thin mt-[-8px]">
                   {dataWeather.country}
                 </h1>
               </div>
+                <h1 className="font-thin relative">windspeed <span className="font-normal">{weather.windspeed} {unitSpeedState}</span></h1>
               <div>
-                <h1>{weather.windspeed}</h1>
               </div>
               </div>
               <button onClick={() => setWeatherState(false)} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
