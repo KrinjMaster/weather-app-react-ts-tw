@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from "react"
-import { IOption } from "./Interfaces/IOption"
-import { IWeatherData } from "./Interfaces/IWeatherData"
+import { IOption } from "./interfaces/IOption"
+import { IWeatherData } from "./interfaces/IWeatherData"
 
 const App = () => {
   const [term, setTerm] = useState<string>('')
@@ -122,7 +122,7 @@ const App = () => {
                   {dataWeather.country}
                 </h1>
               </div>
-                <h1 className="font-thin relative">windspeed <span className="font-normal">{weather.windspeed} {unitSpeedState}</span></h1>
+                <h1 className="font-thin mb-[80px]"><span className="font-normal">{weather.windspeed} {unitSpeedState}</span> <br></br>windspeed </h1>
               <div>
               </div>
               </div>
