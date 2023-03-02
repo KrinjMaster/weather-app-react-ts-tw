@@ -1,23 +1,46 @@
-import { useState, ChangeEvent } from "react"
+import { useState, ChangeEvent, useReducer } from "react"
 import { IOption } from "./interfaces/IOption"
 import { IWeatherData } from "./interfaces/IWeatherData"
+import axios from "axios"
+
+enum Actions {
+  changeImperial = "changeImperial",
+  changeMeter = "changeMeter",
+}
+
+interface State {
+  temperature_unit: string,
+  windspeed_unit: string,
+}
+
+interface Action {
+  type: Actions
+}
+
+const UnitReducer = (state: State, action: Action) => {
+  switch (action.type) { 
+    case Actions.changeImperial:
+      return {temperature_unit: 'fahrenheit', windspeed_unit: 'mph'}
+    case Actions.changeMeter:
+      return {temperature_unit: 'celsius', windspeed_unit: 'kmh'}
+    default: return state
+  }
+}
 
 const App = () => {
   const [term, setTerm] = useState<string>('')
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<IOption[]>([])
   const [showOptions, setShowOptions] = useState(true)
-  const [dataWeather, setDataWeather] = useState<IOption>(Object)
-  const [weather, setWeather] = useState<IWeatherData>(Object)
-  const [weatherState, setWeatherState] = useState(false)
-  const [unitTempState, setUnitTempState] = useState('celsius')
-  const [unitSpeedState, setUnitSpeedState] = useState('kmh')
-  const [image, setImage]=  useState<string>('')
-
+  const [state, UnitDispatch] = useReducer(UnitReducer, {temperature_unit: 'celsius', windspeed_unit: 'kmh'})
+  const [weatherData, setWeatherData] = useState(Object)
+  const [weatherInfoObject, setWeatherInfoObject] = useState<IWeatherData | null>(Object)
+  const [weatherDataState, setWeatherDataState] = useState(false)
+  const [date, setDate] = useState("")
+  const [dateIndex, setDateIndex] = useState<number>(0)
   
-  const getSearchOptions = (value: string) => {
-    fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${value}&count=3`)
-    .then((res) => res.json())
-    .then((data) => setOptions(data.results))
+  const getSearchOptions = async (value: string) => {
+    const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${value}&count=3`)
+    setOptions(response.data.results)
   }
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,39 +51,33 @@ const App = () => {
     
     getSearchOptions(value)
     setShowOptions(true)
-    setWeatherState(false)
   }
 
   const onOptionSelect = (option: IOption) => {
     setTerm(option.name)
     setShowOptions(false)
-    setDataWeather(option)
+    setWeatherData(option)
   }
 
-  const onSubmit = (option: IOption) => {
-    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&current_weather=true&temperature_unit=${unitTempState}&windspeed_unit=${unitSpeedState}`)
-    .then(response => response.json())
-    .then(data => setWeather(data.current_weather))
-    .then(data => setWeatherState(true))
+  const onSubmit = async (option: IOption) => {
+    const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&hourly=temperature_2m,relativehumidity_2m&temperature_unit=${state.temperature_unit}&windspeed_unit=${state.windspeed_unit}&current_weather=true`)
+    setWeatherInfoObject(response.data)
+    setWeatherDataState(true)
+    setDate((new Date().toISOString()).substring(0,11).concat((new Date().getHours()).toString().concat(":00")))
+    if (weatherInfoObject !== null) {
+      setDateIndex((weatherInfoObject.hourly.time).indexOf(date))
+    }
   }
 
   const onUnitChange = ( ) => {
-    if (unitTempState === 'celsius') {
-      setUnitTempState('fahrenheit')
-    } else if(unitTempState === 'fahrenheit') {
-      setUnitTempState('celsius')
-    }
-    onUnitSpeedChange()
-    setWeatherState(false)
-  }
-
-  const onUnitSpeedChange = () => {
-    if (unitSpeedState === 'kmh') {
-      setUnitSpeedState('mph')
-    } else {
-      setUnitSpeedState('kmh')
-    }
-    setWeatherState(false)
+      if (state.temperature_unit === 'celsius') {
+        UnitDispatch({type: Actions.changeImperial})
+        setWeatherDataState(false)
+      } 
+      else {
+        UnitDispatch({type: Actions.changeMeter})
+        setWeatherDataState(false)
+      }
   }
 
   return (
@@ -78,7 +95,7 @@ const App = () => {
           </li>
           ))}
           </ul>
-          <button onClick={() => onSubmit(dataWeather)} className="rounded-r-md text-white border-2 border-zinc-100 hover;border-zinc-500 hover:text-zinc-100 px-2 py cursor-pointer mt-[75px]">Search!</button>
+          <button onClick={() => onSubmit(weatherData)} className="rounded-r-md text-white border-2 border-zinc-100 hover;border-zinc-500 hover:text-zinc-100 px-2 py cursor-pointer mt-[75px]">Search!</button>
           <div className="flex justify-center absolute top-0">
             <h1 className="font-bold text-white mr-2">Metric Units</h1>
             <div>
@@ -95,25 +112,29 @@ const App = () => {
                 >Imperial Units</label>
             </div>
           </div>
-            {weatherState && <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-64 w-96 align-middle text-white">
+            {weatherDataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-64 w-96 align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
-                {weather.temperature}° 
+                {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
               </h1>
-              <img src={image} alt="" className="absolute mt-[-5px] ml-[250px] w-[90px]"/>
               <div className="flex flex-col absolute top-[3px] ml-10">
                 <h1 className="font-bold text-3xl">
-                  {dataWeather.name}
+                  {weatherData.name}
                 </h1>
                 <h1 className="font-thin mt-[-8px]">
-                  {dataWeather.country}
+                  {weatherData.country}
+                </h1>
+              </div >
+              <div className="flex justify-center gap-10">
+                <h1 className="font-thin"><span className="font-normal">{weatherInfoObject?.current_weather.windspeed} {state.windspeed_unit}</span> <br></br>windspeed </h1>
+                <h1 className="font-thin">
+                  <span className="font-bold">{weatherInfoObject?.hourly.relativehumidity_2m[dateIndex]}%</span><br></br> humidity
                 </h1>
               </div>
-                <h1 className="font-thin mb-[80px]"><span className="font-normal">{weather.windspeed} {unitSpeedState}</span> <br></br>windspeed </h1>
               <div>
               </div>
               </div>
-              <button onClick={() => setWeatherState(false)} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
+              <button onClick={() => close} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
           </div>}
         </div>
         <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
