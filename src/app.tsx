@@ -42,19 +42,6 @@ const App = () => {
     .then(response => response.json())
     .then(data => setWeather(data.current_weather))
     .then(data => setWeatherState(true))
-    if (weather.weathercode === 0) {
-      setImage('http://openweathermap.org/img/wn/01d.png')
-    } else if (weather.weathercode === 1 || weather.weathercode === 2 || weather.weathercode === 3) {
-        setImage('http://openweathermap.org/img/wn/02d.png')
-    } else if (weather.weathercode === 45 || weather.weathercode === 48) {
-      setImage('http://openweathermap.org/img/wn/50d.png')
-    } else if (weather.weathercode === 51 || weather.weathercode === 53 || weather.weathercode === 55 || weather.weathercode === 56 || weather.weathercode === 57 || weather.weathercode === 61 || weather.weathercode === 63 || weather.weathercode === 65 || weather.weathercode === 66 || weather.weathercode === 67 || weather.weathercode === 80 || weather.weathercode === 81 || weather.weathercode === 82 ) {
-      setImage('http://openweathermap.org/img/wn/09d.png')
-    } else if (weather.weathercode === 71 || weather.weathercode === 73 || weather.weathercode === 75 || weather.weathercode === 77 || weather.weathercode === 85 || weather.weathercode === 86) {
-      setImage('http://openweathermap.org/img/wn/13d.png')
-    } else if ( weather.weathercode === 95 || weather.weathercode === 96 || weather.weathercode === 99) {
-      setImage('http://openweathermap.org/img/wn/11d.png')
-    }
   }
 
   const onUnitChange = ( ) => {
@@ -78,7 +65,7 @@ const App = () => {
 
   return (
     <main className="flex justify-center bg-zinc-700 h-[100vh] w-full">
-      <section className="bg-white bg-opacity-20 backdrop-blur-lg drop-shadow-lg rounded w-full md:max-w-[900px] p-4 flex flex-col text-center md:px-10 lg:p-24 h-full lg:h-[500px]">
+      <section className="bg-white bg-opacity-20 backdrop-blur-lg drop-shadow-lg rounded w-full md:max-w-[900px] p-4 flex flex-col text-center md:px-10 lg:p-24 h-screen]">
         <h1 className="text-4xl font-thin text-white">Krinj Master <span className="font-bold">Forecast</span></h1>
         <p className="text-sm mt-2 text-white">Enter a city to get a weather forecast!</p>
 
