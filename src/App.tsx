@@ -116,7 +116,7 @@ const App = () => {
               <button onClick={() => setWeatherState(false)} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
           </div>}
         </div>
-        <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50 text-center">&#9925; Weather data by Open-Meteo.com</a>
+        <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
       </section>
     </main>
   )
