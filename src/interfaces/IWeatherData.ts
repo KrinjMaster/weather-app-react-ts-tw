@@ -3,6 +3,7 @@ export interface IWeatherData {
     temperature: number
     windspeed: number
     weathercode: number
+    time: string
   }
   hourly_units: {
     temperature_2m: string

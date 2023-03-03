@@ -2,28 +2,62 @@ import { useState, ChangeEvent, useReducer } from "react"
 import { IOption } from "./interfaces/IOption"
 import { IWeatherData } from "./interfaces/IWeatherData"
 import axios from "axios"
+import WindPng from '../public/assets/icons8-wind-100-2.png'
+import HumidityPng from '../public/assets/icons8-drop-of-blood-100.png'
+import LoadPng from '../public/assets/time-left.png'
 
-enum Actions {
+enum UnitActions {
   changeImperial = "changeImperial",
   changeMeter = "changeMeter",
 }
 
-interface State {
+interface UnitState {
   temperature_unit: string,
   windspeed_unit: string,
 }
 
-interface Action {
-  type: Actions
+interface UnitAction {
+  type: UnitActions
 }
 
-const UnitReducer = (state: State, action: Action) => {
+
+
+const UnitReducer = (state: UnitState, action: UnitAction) => {
   switch (action.type) { 
-    case Actions.changeImperial:
+    case UnitActions.changeImperial:
       return {temperature_unit: 'fahrenheit', windspeed_unit: 'mph'}
-    case Actions.changeMeter:
+    case UnitActions.changeMeter:
       return {temperature_unit: 'celsius', windspeed_unit: 'kmh'}
     default: return state
+  }
+}
+
+enum DataActions {
+  changeDataStateTrue= "changeDataStateT",
+  changeLoadStateTrue= "changeLoadStateT",
+  changeDataStateFalse= "changeDataStateF",
+  changeLoadStateFalse= "changeLoadStateF"
+}
+
+interface DataAction {
+  type: DataActions
+}
+
+interface DataState {
+  dataState: boolean
+  loadData: boolean
+}
+
+const DataReducer = (state: DataState, action: DataAction) => {
+  switch (action.type) {
+    case DataActions.changeDataStateTrue:
+      return {dataState: true, loadData: state.loadData}
+    case DataActions.changeDataStateFalse:
+      return {dataState: false, loadData: state.loadData}
+    case DataActions.changeLoadStateTrue:
+      return {dataState: state.dataState, loadData: true}
+    case DataActions.changeLoadStateFalse:
+      return {dataState: state.dataState, loadData: false}
   }
 }
 
@@ -31,12 +65,11 @@ const App = () => {
   const [term, setTerm] = useState<string>('')
   const [options, setOptions] = useState<IOption[]>([])
   const [showOptions, setShowOptions] = useState(true)
-  const [state, UnitDispatch] = useReducer(UnitReducer, {temperature_unit: 'celsius', windspeed_unit: 'kmh'})
+  const [UnitState, UnitDispatch] = useReducer(UnitReducer, {temperature_unit: 'celsius', windspeed_unit: 'kmh'})
   const [weatherData, setWeatherData] = useState(Object)
   const [weatherInfoObject, setWeatherInfoObject] = useState<IWeatherData | null>(Object)
-  const [weatherDataState, setWeatherDataState] = useState(false)
-  const [date, setDate] = useState("")
-  const [dateIndex, setDateIndex] = useState<number>(0)
+  const [DataState, DataDispatch] = useReducer(DataReducer, {dataState: false, loadData: false})
+  const [date, setDate] = useState<number>(0)
   
   const getSearchOptions = async (value: string) => {
     const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${value}&count=3`)
@@ -51,33 +84,40 @@ const App = () => {
     
     getSearchOptions(value)
     setShowOptions(true)
+    DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
   const onOptionSelect = (option: IOption) => {
     setTerm(option.name)
     setShowOptions(false)
     setWeatherData(option)
+    DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
   const onSubmit = async (option: IOption) => {
-    const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&hourly=temperature_2m,relativehumidity_2m&temperature_unit=${state.temperature_unit}&windspeed_unit=${state.windspeed_unit}&current_weather=true`)
+    DataDispatch({type: DataActions.changeLoadStateTrue})
+    DataDispatch({type: DataActions.changeDataStateFalse})
+    const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&hourly=temperature_2m,relativehumidity_2m&temperature_unit=${UnitState.temperature_unit}&windspeed_unit=${UnitState.windspeed_unit}&current_weather=true`)
     setWeatherInfoObject(response.data)
-    setWeatherDataState(true)
-    setDate((new Date().toISOString()).substring(0,11).concat((new Date().getHours()).toString().concat(":00")))
-    if (weatherInfoObject !== null) {
-      setDateIndex((weatherInfoObject.hourly.time).indexOf(date))
+    DataDispatch({type: DataActions.changeLoadStateFalse})
+    DataDispatch({type: DataActions.changeDataStateTrue})
+    if (weatherInfoObject!) {
+      setDate(weatherInfoObject.hourly.time.indexOf(weatherInfoObject.current_weather.time))
     }
   }
 
   const onUnitChange = ( ) => {
-      if (state.temperature_unit === 'celsius') {
-        UnitDispatch({type: Actions.changeImperial})
-        setWeatherDataState(false)
+      if (UnitState.temperature_unit === 'celsius') {
+        UnitDispatch({type: UnitActions.changeImperial})
       } 
       else {
-        UnitDispatch({type: Actions.changeMeter})
-        setWeatherDataState(false)
+        UnitDispatch({type: UnitActions.changeMeter})
       }
+      DataDispatch({type: DataActions.changeDataStateFalse})
+  }
+
+  const onClose = ( ) => {
+    DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
   return (
@@ -112,7 +152,13 @@ const App = () => {
                 >Imperial Units</label>
             </div>
           </div>
-            {weatherDataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-64 w-96 align-middle text-white">
+            {DataState.loadData && 
+              <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[12rem] w-[15rem] align-middle ">
+                <img src={LoadPng} width="100px" alt="loading" className="ml-[4rem] mt-5" />
+                <h1 className="text-[2rem]">Loading...</h1>
+              </div>
+            }
+            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[20rem] w-[22rem] align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
                 {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
@@ -125,16 +171,20 @@ const App = () => {
                   {weatherData.country}
                 </h1>
               </div >
-              <div className="flex justify-center gap-10">
-                <h1 className="font-thin"><span className="font-normal">{weatherInfoObject?.current_weather.windspeed} {state.windspeed_unit}</span> <br></br>windspeed </h1>
-                <h1 className="font-thin">
-                  <span className="font-bold">{weatherInfoObject?.hourly.relativehumidity_2m[dateIndex]}%</span><br></br> humidity
-                </h1>
+              <div className="flex justify-center gap-10 h-[45px]">
+                <div className="flex align-middle gap-2" >
+                  <img width="45px" src={WindPng}/>
+                  <h1 className="font-bold text-[25px] mt-1">{weatherInfoObject?.current_weather.windspeed} {UnitState.windspeed_unit}</h1>
+                </div>
+                <div className="flex align-middle gap-2">
+                  <img width="45px" src={HumidityPng}/>
+                  <h1 className="font-bold text-[25px] mt-1"><span className="font-bold">{weatherInfoObject?.hourly.relativehumidity_2m[date]}%</span></h1>
+                </div>
               </div>
               <div>
               </div>
               </div>
-              <button onClick={() => close} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
+              <button onClick={() => onClose()} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
           </div>}
         </div>
         <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
