@@ -154,7 +154,7 @@ const App = () => {
                 <h1 className="text-[2rem]">Loading...</h1>
               </div>
             }
-            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[25rem] align-middle text-white">
+            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[23rem] align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
                 {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
