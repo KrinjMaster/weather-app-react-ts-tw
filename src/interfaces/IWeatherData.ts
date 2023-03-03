@@ -1,6 +1,16 @@
 export interface IWeatherData {
-  time: string
-  temperature: number
-  windspeed: number
-  weathercode: number
+  current_weather: {
+    temperature: number
+    windspeed: number
+    weathercode: number
+    time: string
+  }
+  hourly_units: {
+    temperature_2m: string
+  }
+  hourly: {
+    time: string[]
+    temperature_2m: number[]
+    relativehumidity_2m: number[]
+  }
 }

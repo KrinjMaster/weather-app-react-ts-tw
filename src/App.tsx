@@ -1,23 +1,78 @@
-import { useState, ChangeEvent } from "react"
+import { useState, ChangeEvent, useReducer, useEffect } from "react"
 import { IOption } from "./interfaces/IOption"
 import { IWeatherData } from "./interfaces/IWeatherData"
+import axios from "axios"
+import WindPng from '../public/assets/icons8-wind-100-2.png'
+import HumidityPng from '../public/assets/icons8-drop-of-blood-100.png'
+import LoadPng from '../public/assets/time-left.png'
+
+enum UnitActions {
+  changeImperial = "changeImperial",
+  changeMeter = "changeMeter",
+}
+
+interface UnitState {
+  temperature_unit: string,
+  windspeed_unit: string,
+}
+
+interface UnitAction {
+  type: UnitActions
+}
+
+
+
+const UnitReducer = (state: UnitState, action: UnitAction) => {
+  switch (action.type) { 
+    case UnitActions.changeImperial:
+      return {temperature_unit: 'fahrenheit', windspeed_unit: 'mph'}
+    case UnitActions.changeMeter:
+      return {temperature_unit: 'celsius', windspeed_unit: 'kmh'}
+    default: return state
+  }
+}
+
+enum DataActions {
+  changeDataStateTrue= "changeDataStateT",
+  changeLoadStateTrue= "changeLoadStateT",
+  changeDataStateFalse= "changeDataStateF",
+  changeLoadStateFalse= "changeLoadStateF"
+}
+
+interface DataAction {
+  type: DataActions
+}
+
+interface DataState {
+  dataState: boolean
+  loadData: boolean
+}
+
+const DataReducer = (state: DataState, action: DataAction) => {
+  switch (action.type) {
+    case DataActions.changeDataStateTrue:
+      return {dataState: true, loadData: state.loadData}
+    case DataActions.changeDataStateFalse:
+      return {dataState: false, loadData: state.loadData}
+    case DataActions.changeLoadStateTrue:
+      return {dataState: state.dataState, loadData: true}
+    case DataActions.changeLoadStateFalse:
+      return {dataState: state.dataState, loadData: false}
+  }
+}
 
 const App = () => {
   const [term, setTerm] = useState<string>('')
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<IOption[]>([])
   const [showOptions, setShowOptions] = useState(true)
-  const [dataWeather, setDataWeather] = useState<IOption>(Object)
-  const [weather, setWeather] = useState<IWeatherData>(Object)
-  const [weatherState, setWeatherState] = useState(false)
-  const [unitTempState, setUnitTempState] = useState('celsius')
-  const [unitSpeedState, setUnitSpeedState] = useState('kmh')
-  const [image, setImage]=  useState<string>('')
-
+  const [UnitState, UnitDispatch] = useReducer(UnitReducer, {temperature_unit: 'celsius', windspeed_unit: 'kmh'})
+  const [weatherData, setWeatherData] = useState(Object)
+  const [weatherInfoObject, setWeatherInfoObject] = useState<IWeatherData | null>(Object)
+  const [DataState, DataDispatch] = useReducer(DataReducer, {dataState: false, loadData: false})
   
-  const getSearchOptions = (value: string) => {
-    fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${value}&count=3`)
-    .then((res) => res.json())
-    .then((data) => setOptions(data.results))
+  const getSearchOptions = async (value: string) => {
+    const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${value}&count=3`)
+    setOptions(response.data.results)
   }
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,39 +83,37 @@ const App = () => {
     
     getSearchOptions(value)
     setShowOptions(true)
-    setWeatherState(false)
+    DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
   const onOptionSelect = (option: IOption) => {
     setTerm(option.name)
     setShowOptions(false)
-    setDataWeather(option)
+    setWeatherData(option)
+    DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
-  const onSubmit = (option: IOption) => {
-    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&current_weather=true&temperature_unit=${unitTempState}&windspeed_unit=${unitSpeedState}`)
-    .then(response => response.json())
-    .then(data => setWeather(data.current_weather))
-    .then(data => setWeatherState(true))
+  const onSubmit = async (option: IOption) => {
+    DataDispatch({type: DataActions.changeLoadStateTrue})
+    DataDispatch({type: DataActions.changeDataStateFalse})
+    const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&hourly=temperature_2m,relativehumidity_2m&temperature_unit=${UnitState.temperature_unit}&windspeed_unit=${UnitState.windspeed_unit}&current_weather=true`)
+    setWeatherInfoObject(response.data)
+    DataDispatch({type: DataActions.changeLoadStateFalse})
+    DataDispatch({type: DataActions.changeDataStateTrue})
   }
 
   const onUnitChange = ( ) => {
-    if (unitTempState === 'celsius') {
-      setUnitTempState('fahrenheit')
-    } else if(unitTempState === 'fahrenheit') {
-      setUnitTempState('celsius')
-    }
-    onUnitSpeedChange()
-    setWeatherState(false)
+      if (UnitState.temperature_unit === 'celsius') {
+        UnitDispatch({type: UnitActions.changeImperial})
+      } 
+      else {
+        UnitDispatch({type: UnitActions.changeMeter})
+      }
+      DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
-  const onUnitSpeedChange = () => {
-    if (unitSpeedState === 'kmh') {
-      setUnitSpeedState('mph')
-    } else {
-      setUnitSpeedState('kmh')
-    }
-    setWeatherState(false)
+  const onClose = ( ) => {
+    DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
   return (
@@ -78,7 +131,7 @@ const App = () => {
           </li>
           ))}
           </ul>
-          <button onClick={() => onSubmit(dataWeather)} className="rounded-r-md text-white border-2 border-zinc-100 hover;border-zinc-500 hover:text-zinc-100 px-2 py cursor-pointer mt-[75px]">Search!</button>
+          <button onClick={() => onSubmit(weatherData)} className="rounded-r-md text-white border-2 border-zinc-100 hover;border-zinc-500 hover:text-zinc-100 px-2 py cursor-pointer mt-[75px]">Search!</button>
           <div className="flex justify-center absolute top-0">
             <h1 className="font-bold text-white mr-2">Metric Units</h1>
             <div>
@@ -95,25 +148,51 @@ const App = () => {
                 >Imperial Units</label>
             </div>
           </div>
-            {weatherState && <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-64 w-96 align-middle text-white">
+            {DataState.loadData && 
+              <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[12rem] w-[15rem] align-middle ">
+                <img src={LoadPng} width="100px" alt="loading" className="ml-[4rem] mt-5" />
+                <h1 className="text-[2rem]">Loading...</h1>
+              </div>
+            }
+            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[23rem] align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
-                {weather.temperature}° 
+                {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
               </h1>
-              <img src={image} alt="" className="absolute mt-[-5px] ml-[250px] w-[90px]"/>
               <div className="flex flex-col absolute top-[3px] ml-10">
                 <h1 className="font-bold text-3xl">
-                  {dataWeather.name}
+                  {weatherData.name}
                 </h1>
-                <h1 className="font-thin mt-[-8px]">
-                  {dataWeather.country}
+                <h1 className="font-thin">
+                  {weatherData.country}
                 </h1>
+              </div >
+              <div className="flex justify-center gap-10 h-[45px]">
+                <div className="flex align-middle gap-2" >
+                  <img width="45px" src={WindPng}/>
+                  <h1 className="font-bold text-[25px] mt-1">{weatherInfoObject?.current_weather.windspeed} {UnitState.windspeed_unit}</h1>
+                </div>
+                <div className="flex align-middle gap-2">
+                  <img width="45px" src={HumidityPng}/>
+                  <h1 className="font-bold text-[25px] mt-1"><span className="font-bold">{weatherInfoObject?.hourly.relativehumidity_2m[weatherInfoObject.hourly.time.indexOf(weatherInfoObject?.current_weather.time)]}%</span></h1>
+                </div>
               </div>
-                <h1 className="font-thin mb-[80px]"><span className="font-normal">{weather.windspeed} {unitSpeedState}</span> <br></br>windspeed </h1>
               <div>
               </div>
+              <div className="flex justify-center">
+                <ul className="mt-10 flex gap-6 font-bold">
+                    {weatherInfoObject?.hourly.time.slice(weatherInfoObject?.hourly.time.indexOf(weatherInfoObject?.current_weather.time) + 1, weatherInfoObject?.hourly.time.indexOf(weatherInfoObject?.current_weather.time) + 6).map((time, index) => {
+                      return <li key={index}>
+                        <h1>{time.slice(11,16)}</h1>
+                        <h1 className="font-normal">
+                          {weatherInfoObject.hourly.temperature_2m[index + weatherInfoObject?.hourly.time.indexOf(weatherInfoObject?.current_weather.time) - 2]} {weatherInfoObject.hourly_units.temperature_2m}
+                        </h1>
+                      </li>
+                    })}
+                </ul>
               </div>
-              <button onClick={() => setWeatherState(false)} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
+              </div>
+              <button onClick={() => onClose()} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
           </div>}
         </div>
         <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
