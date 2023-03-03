@@ -185,11 +185,11 @@ const App = () => {
               </div>
               <div className="flex justify-center">
                 <ul className="mt-10 flex gap-6 font-bold">
-                    {weatherInfoObject?.hourly.time.slice(date - 2, date + 2).map((time, index) => {
+                    {weatherInfoObject?.hourly.time.slice(date + 1, date + 6).map((time, index) => {
                       return <li key={index}>
                         <h1>{time.slice(11,16)}</h1>
                         <h1 className="font-normal">
-                          {weatherInfoObject.hourly.temperature_2m[index]} {weatherInfoObject.hourly_units.temperature_2m}
+                          {weatherInfoObject.hourly.temperature_2m[index + date - 2]} {weatherInfoObject.hourly_units.temperature_2m}
                         </h1>
                       </li>
                     })}
