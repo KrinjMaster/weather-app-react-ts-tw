@@ -158,7 +158,7 @@ const App = () => {
                 <h1 className="text-[2rem]">Loading...</h1>
               </div>
             }
-            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[20rem] w-[22rem] align-middle text-white">
+            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[23rem] align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
                 {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
@@ -182,6 +182,18 @@ const App = () => {
                 </div>
               </div>
               <div>
+              </div>
+              <div className="flex justify-center">
+                <ul className="mt-10 flex gap-6 font-bold">
+                    {weatherInfoObject?.hourly.time.slice(date + 1, date + 6).map((time, index) => {
+                      return <li key={index}>
+                        <h1>{time.slice(11,16)}</h1>
+                        <h1 className="font-normal">
+                          {weatherInfoObject.hourly.temperature_2m[index + date - 2]} {weatherInfoObject.hourly_units.temperature_2m}
+                        </h1>
+                      </li>
+                    })}
+                </ul>
               </div>
               </div>
               <button onClick={() => onClose()} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
