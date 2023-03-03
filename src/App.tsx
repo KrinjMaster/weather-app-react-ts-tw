@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useReducer } from "react"
+import { useState, ChangeEvent, useReducer, useEffect } from "react"
 import { IOption } from "./interfaces/IOption"
 import { IWeatherData } from "./interfaces/IWeatherData"
 import axios from "axios"
@@ -69,7 +69,6 @@ const App = () => {
   const [weatherData, setWeatherData] = useState(Object)
   const [weatherInfoObject, setWeatherInfoObject] = useState<IWeatherData | null>(Object)
   const [DataState, DataDispatch] = useReducer(DataReducer, {dataState: false, loadData: false})
-  const [date, setDate] = useState<number>(0)
   
   const getSearchOptions = async (value: string) => {
     const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${value}&count=3`)
@@ -101,9 +100,6 @@ const App = () => {
     setWeatherInfoObject(response.data)
     DataDispatch({type: DataActions.changeLoadStateFalse})
     DataDispatch({type: DataActions.changeDataStateTrue})
-    if (weatherInfoObject!) {
-      setDate(weatherInfoObject.hourly.time.indexOf(weatherInfoObject.current_weather.time))
-    }
   }
 
   const onUnitChange = ( ) => {
@@ -158,7 +154,7 @@ const App = () => {
                 <h1 className="text-[2rem]">Loading...</h1>
               </div>
             }
-            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[23rem] align-middle text-white">
+            {DataState.dataState &&  <div className="absolute mt-[150px] bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[25rem] align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
                 {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
@@ -167,7 +163,7 @@ const App = () => {
                 <h1 className="font-bold text-3xl">
                   {weatherData.name}
                 </h1>
-                <h1 className="font-thin mt-[-8px]">
+                <h1 className="font-thin">
                   {weatherData.country}
                 </h1>
               </div >
@@ -178,18 +174,18 @@ const App = () => {
                 </div>
                 <div className="flex align-middle gap-2">
                   <img width="45px" src={HumidityPng}/>
-                  <h1 className="font-bold text-[25px] mt-1"><span className="font-bold">{weatherInfoObject?.hourly.relativehumidity_2m[date]}%</span></h1>
+                  <h1 className="font-bold text-[25px] mt-1"><span className="font-bold">{weatherInfoObject?.hourly.relativehumidity_2m[weatherInfoObject.hourly.time.indexOf(weatherInfoObject?.current_weather.time)]}%</span></h1>
                 </div>
               </div>
               <div>
               </div>
               <div className="flex justify-center">
                 <ul className="mt-10 flex gap-6 font-bold">
-                    {weatherInfoObject?.hourly.time.slice(date + 1, date + 6).map((time, index) => {
+                    {weatherInfoObject?.hourly.time.slice(weatherInfoObject?.hourly.time.indexOf(weatherInfoObject?.current_weather.time) + 1, weatherInfoObject?.hourly.time.indexOf(weatherInfoObject?.current_weather.time) + 6).map((time, index) => {
                       return <li key={index}>
                         <h1>{time.slice(11,16)}</h1>
                         <h1 className="font-normal">
-                          {weatherInfoObject.hourly.temperature_2m[index + date - 2]} {weatherInfoObject.hourly_units.temperature_2m}
+                          {weatherInfoObject.hourly.temperature_2m[index + weatherInfoObject?.hourly.time.indexOf(weatherInfoObject?.current_weather.time) - 2]} {weatherInfoObject.hourly_units.temperature_2m}
                         </h1>
                       </li>
                     })}
