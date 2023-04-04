@@ -1,5 +1,5 @@
 {
-  "homepage": "https://github.github.io/krinj-forecast/",
+  "homepage": "https://github.com/KrinjMaster/weather-app-react-ts-tw/",
   "name": "weather",
   "private": true,
   "version": "0.0.1",
@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "prebuild": "gh-pages -d build",
     "preview": "vite preview",
     "test": "vitest"
   },
