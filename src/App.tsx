@@ -116,7 +116,7 @@ const App = () => {
     DataDispatch({type: DataActions.changeDataStateFalse})
   }
 
-  return (
+  return (<>
     <main className="flex justify-center bg-zinc-700 h-[100vh] w-full">
       <section className="bg-white bg-opacity-20 backdrop-blur-lg drop-shadow-lg rounded w-full md:max-w-[900px] p-4 flex flex-col text-center md:px-10 lg:p-24 h-screen]">
         <h1 className="text-4xl font-thin text-white">Krinj Master <span className="font-bold">Forecast</span></h1>
@@ -198,6 +198,15 @@ const App = () => {
         <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
       </section>
     </main>
+    <div className="w-screen h-screen bg-zinc-900 text-white font-bold text-center">
+        <h1>About</h1>
+        <h2>This site tells you weather forecast. You just need to feel input field up and choose city and press button!</h2>
+    </div>
+    <div className="w-screen h-screen bg-green-900 text-white font-bold text-center">
+        <h1>Contacts:</h1>
+        <a href="https://github.com/krinjmaster" target="_blank" className='text-blue-500'>GitHub</a>
+    </div>
+  </>
   )
 }
 
