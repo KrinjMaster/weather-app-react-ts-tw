@@ -63,7 +63,7 @@ const DataReducer = (state: DataState, action: DataAction) => {
 
 const App = () => {
   const [term, setTerm] = useState<string>('')
-  const [options, setOptions] = useState<IOption[]>([])
+  const [options, setOptions] = useState<IOption[] | null>([])
   const [showOptions, setShowOptions] = useState(true)
   const [UnitState, UnitDispatch] = useReducer(UnitReducer, {temperature_unit: 'celsius', windspeed_unit: 'kmh'})
   const [weatherData, setWeatherData] = useState(Object)
@@ -78,7 +78,8 @@ const App = () => {
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setTerm(value)
-    
+    setWeatherData(null)
+
     if (value === '') return
     
     getSearchOptions(value)
@@ -94,12 +95,23 @@ const App = () => {
   }
 
   const onSubmit = async (option: IOption) => {
-    DataDispatch({type: DataActions.changeLoadStateTrue})
-    DataDispatch({type: DataActions.changeDataStateFalse})
-    const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&hourly=temperature_2m,relativehumidity_2m&temperature_unit=${UnitState.temperature_unit}&windspeed_unit=${UnitState.windspeed_unit}&current_weather=true`)
-    setWeatherInfoObject(response.data)
-    DataDispatch({type: DataActions.changeLoadStateFalse})
-    DataDispatch({type: DataActions.changeDataStateTrue})
+    if (option === undefined) {
+      alert('Please select option')
+    }
+    if (option === null) {
+      alert('Please select option')
+    }
+    if (option.country === undefined) {
+      alert('Please select option')
+    }
+    else {
+      DataDispatch({type: DataActions.changeLoadStateTrue})
+      DataDispatch({type: DataActions.changeDataStateFalse})
+      const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${option.latitude}&longitude=${option.longitude}&hourly=temperature_2m,relativehumidity_2m&temperature_unit=${UnitState.temperature_unit}&windspeed_unit=${UnitState.windspeed_unit}&current_weather=true`)
+      setWeatherInfoObject(response.data)
+      DataDispatch({type: DataActions.changeLoadStateFalse})
+      DataDispatch({type: DataActions.changeDataStateTrue})
+    }
   }
 
   const onUnitChange = ( ) => {
@@ -198,11 +210,16 @@ const App = () => {
         <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
       </section>
     </main>
-    <div className="w-screen h-screen bg-zinc-900 text-white font-bold text-center">
+    <div className="w-screen h-screen bg-zinc-700 text-white font-bold text-center">
         <h1>About</h1>
-        <h2>This site tells you weather forecast. You just need to feel input field up and choose city and press button!</h2>
+        <h2>Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
     </div>
-    <div className="w-screen h-screen bg-green-900 text-white font-bold text-center">
+    <div className="w-screen h-screen bg-zinc-600 text-white font-bold text-center">
+        <h1>Our workers:</h1>
+        <h1 className="mt-10">Maxim Mecnshikov</h1>
+        <h1 className="font-thin">Designer / Programmer</h1>
+    </div>
+    <div className="w-screen h-screen bg-zinc-900 text-white font-bold text-center">
         <h1>Contacts:</h1>
         <a href="https://github.com/krinjmaster" target="_blank" className='text-blue-500'>GitHub</a>
     </div>
