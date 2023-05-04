@@ -129,8 +129,8 @@ const App = () => {
   }
 
   return (<>
-    <main className="flex justify-center bg-zinc-700 h-[100vh] w-full">
-      <section className="bg-white bg-opacity-20 backdrop-blur-lg drop-shadow-lg rounded w-full md:max-w-[900px] p-4 flex flex-col text-center md:px-10 lg:p-24 h-screen]">
+    <main className="flex flex-col items-center justify-center bg-zinc-700 h-fit w-full">
+      <section className="bg-white bg-opacity-20 backdrop-blur-lg drop-shadow-lg w-full md:max-w-[900px] p-4 flex flex-col text-center md:px-10 lg:p-24 h-[105vh]">
         <h1 className="text-4xl font-thin text-white">Krinj Master <span className="font-bold">Forecast</span></h1>
         <p className="text-sm mt-2 text-white">Enter a city to get a weather forecast!</p>
 
@@ -207,22 +207,50 @@ const App = () => {
               <button onClick={() => onClose()} className="flex justify-center absolute text-center top-1 hover:text-red-600 text-2xl font-bold px-4 cursor-pointer ">X</button>
           </div>}
         </div>
-        <a href="https://open-meteo.com/" className="absolute bottom-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
+        <a href="https://open-meteo.com/" className="absolute top-1 font-bold text-white opacity-50">&#9925; Weather data by Open-Meteo.com</a>
       </section>
+      <div className="h-screen bg-white bg-opacity-40 text-white font-bold text-center w-full md:max-w-[900px] flex flex-col items-center">
+          <h1 className="text-8xl">About</h1>
+          <img src='/public/assets/Brookhaven_Village.jpg' className="w-[35vw] rounded-lg m-5"/>
+          <h2 className="font-thin text-3xl">Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
+      </div>
+      <div className="h-screen bg-white bg-opacity-50 text-white font-bold text-center w-full md:max-w-[900px] flex flex-col items-center">
+          <h1 className="text-8xl">History</h1>
+          <h2 className="font-thin text-2xl">Once upon a time, in a small town nestled in the foothills of a mountain range, there lived a young man named Alex. Alex had always been fascinated by the weather, and he spent countless hours studying meteorology and tracking weather patterns.
+            One day, as he was walking home from his job at a local hardware store, Alex noticed that the sky was turning dark and ominous. He knew that a storm was brewing, but he had no way of knowing how severe it would be or when it would hit.
+            That's when inspiration struck. What if he could create a company that would provide accurate and up-to-date weather forecasts to people all over the world? It was a bold idea, but Alex was determined to make it a reality.
+            He spent months researching and developing his idea, pouring all of his time and energy into creating a weather forecasting system that would be both reliable and accessible. He worked tirelessly, often staying up late into the night, tweaking and refining his algorithms until they were as accurate as possible.
+            Finally, after months of hard work, Alex launched his company. He called it "Krinj Forecast," and it quickly became a sensation. People all over the world were amazed by the accuracy of his forecasts, and soon, Krinj Forecast was the go-to source for weather information.</h2>
+      </div>
+      <div className="h-screen text-white font-bold text-center bg-white bg-opacity-70 w-full md:max-w-[900px]">
+          <h1 className="text-8xl">Our workers:</h1>
+          <div className="flex justify-center gap-5 align-middle mt-[25vh]">
+            <div className="flex flex-col items-center">
+              <img src='/public/assets/rodney-amirebrahimi-bb10.jpg' className="w-32 rounded-lg"/>
+              <h1 className="mt-1">Peter Parker</h1>
+              <h1 className="font-thin">Programmer</h1>
+            </div>
+            <div className="flex flex-col items-center">
+              <img src='/public/assets/500x500.jpg' className="w-40 rounded-lg"/>
+              <h1 className="mt-1">James Charles</h1>
+              <h1 className="font-thin">Designer</h1>
+            </div>
+            <div className="flex flex-col items-center">
+              <img src='/public/assets/images.jpeg' className="w-[120px] rounded-lg"/>
+              <h1 className="mt-1">Alex White</h1>
+              <h1 className="font-thin">CEO</h1>
+            </div>
+          </div>
+      </div>
+      <div className="h-screen text-white font-bold text-center bg-gray-200 bg-opacity-20 w-full md:max-w-[900px]">
+          <h1 className="text-8xl">Contacts:</h1>
+          <div className="flex gap-5 justify-center">
+            <a href="https://github.com/krinjmaster" target="_blank" className='text-blue-500 text-5xl'>GitHub</a>
+            <a href="https://github.com/krinjmaster" target="_blank" className='text-blue-500 text-5xl'>Telegram</a>
+            <a href="https://github.com/krinjmaster" target="_blank" className='text-blue-500 text-5xl'>OK</a>
+          </div>
+      </div>
     </main>
-    <div className="w-screen h-screen bg-zinc-700 text-white font-bold text-center">
-        <h1>About</h1>
-        <h2>Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
-    </div>
-    <div className="w-screen h-screen bg-zinc-600 text-white font-bold text-center">
-        <h1>Our workers:</h1>
-        <h1 className="mt-10">Maxim Mecnshikov</h1>
-        <h1 className="font-thin">Designer / Programmer</h1>
-    </div>
-    <div className="w-screen h-screen bg-zinc-900 text-white font-bold text-center">
-        <h1>Contacts:</h1>
-        <a href="https://github.com/krinjmaster" target="_blank" className='text-blue-500'>GitHub</a>
-    </div>
   </>
   )
 }
