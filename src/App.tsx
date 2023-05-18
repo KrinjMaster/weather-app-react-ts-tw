@@ -5,6 +5,10 @@ import axios from "axios"
 import WindPng from '../public/assets/icons8-wind-100-2.png'
 import HumidityPng from '../public/assets/icons8-drop-of-blood-100.png'
 import LoadPng from '../public/assets/time-left.png'
+import Worker1 from '../public/assets/images.jpeg'
+import Worker2 from '../public/assets/500x500.jpg'
+import Worker3 from '../public/assets/rodney-amirebrahimi-bb10.jpg'
+import BG from '../public/assets/Brookhaven_Village.jpg'
 
 enum UnitActions {
   changeImperial = "changeImperial",
@@ -218,7 +222,7 @@ const App = () => {
       </section>
       <div id="about" className="h-screen bg-[rgb(20,20,20)] text-white font-bold text-center w-full md:max-w-[900px] flex flex-col justify-center items-center">
           <h1 className="text-8xl">About</h1>
-          <img src='/public/assets/Brookhaven_Village.jpg' className="h-full w-full rounded-md opacity-5 absolute md:max-w-[900px]"/>
+          <img src={BG} className="h-full w-full rounded-md opacity-5 absolute md:max-w-[900px]"/>
           <h2 className="font-thin text-3xl">Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
       </div>
       <div id="history" className="h-screen bg-[rgb(20,20,20)] text-white font-bold text-center w-full md:max-w-[900px] flex flex-col px-5 justify-center items-center">
@@ -233,17 +237,17 @@ const App = () => {
           <h1 className="text-8xl mt-5">Our workers:</h1>
           <div className="flex justify-center gap-5 align-middle mt-[25vh]">
             <div className="flex flex-col items-center">
-              <img src='/public/assets/rodney-amirebrahimi-bb10.jpg' className="w-32 rounded-lg"/>
+              <img src={Worker1} className="w-32 rounded-lg"/>
               <h1 className="mt-1">Peter Parker</h1>
               <h1 className="font-thin">Programmer</h1>
             </div>
             <div className="flex flex-col items-center">
-              <img src='/public/assets/500x500.jpg' className="w-40 rounded-lg"/>
+              <img src={Worker2} className="w-40 rounded-lg"/>
               <h1 className="mt-1">James Charles</h1>
               <h1 className="font-thin">Designer</h1>
             </div>
             <div className="flex flex-col items-center">
-              <img src='/public/assets/images.jpeg' className="w-[120px] rounded-lg"/>
+              <img src={Worker3} className="w-[120px] rounded-lg"/>
               <h1 className="mt-1">Alex White</h1>
               <h1 className="font-thin">CEO</h1>
             </div>
