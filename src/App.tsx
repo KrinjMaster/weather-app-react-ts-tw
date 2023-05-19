@@ -222,7 +222,7 @@ const App = () => {
       </section>
       <div id="about" className="h-screen bg-[rgb(20,20,20)] text-white font-bold text-center w-full md:max-w-[900px] flex flex-col justify-center items-center">
           <h1 className="text-8xl">About</h1>
-          <img src={BG} className="h-full w-full rounded-md opacity-5 absolute md:max-w-[900px]"/>
+          <img src={BG} className="h-full w-full rounded-md opacity-20 absolute md:max-w-[900px]"/>
           <h2 className="font-thin text-3xl">Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
       </div>
       <div id="history" className="h-screen bg-[rgb(20,20,20)] text-white font-bold text-center w-full md:max-w-[900px] flex flex-col px-5 justify-center items-center">
