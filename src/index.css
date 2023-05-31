@@ -8,3 +8,6 @@ body {
 html {
   scroll-behavior: smooth;
 }
+#about {
+  background-image: url('/public//assets/Brookhaven_Village.jpg');
+}
