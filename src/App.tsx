@@ -143,7 +143,7 @@ const App = () => {
       </ul>
     </div>
     <main className="flex flex-col items-center justify-center align-middle bg-[rgb(16,16,16)] h-fit w-full">
-      <section id="home" className="scale-100 backdrop-blur-lg w-full md:max-w-[900px] p-4 flex flex-col text-center md:px-10 lg:p-24 h-[105vh]">
+      <section id="home" className="scale-100 backdrop-blur-lg w-full md:max-w-[90vw] p-4 flex flex-col text-center md:px-10 lg:p-24 h-[105vh]">
         <div className="scale-75 md:scale-100 lg:scale-150">
           <h1 className="text-4xl font-thin text-white">Krinj Master <span className="font-bold">Forecast</span></h1>
           <p className="text-sm text-white">Enter a city to get a weather forecast!</p>
@@ -157,7 +157,7 @@ const App = () => {
             ))}
             </ul>
             <button onClick={() => onSubmit(weatherData)} className="rounded-r-md text-white border-2 border-zinc-100 hover;border-zinc-500 hover:text-zinc-100 px-2 py cursor-pointer mt-[75px]">Search!</button>
-            <div className="flex justify-center absolute top-0">
+            <div className="flex justify-center absolute top-0 ">
               <h1 className="font-bold text-white mr-2">Metric Units</h1>
               <div>
                 <input
@@ -180,7 +180,7 @@ const App = () => {
                 <h1 className="text-[2rem]">Loading...</h1>
               </div>
             }
-            {DataState.dataState &&  <div className="absolute scale-75 2xl:scale-100 left-0 right-0 mt-0.5 ml-auto mr-auto bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[23rem] align-middle text-white">
+            {DataState.dataState &&  <div className="absolute scale-100 2xl:scale-150 2xl:mt-32 left-0 right-0 mt-0.5 ml-auto mr-auto bg-white bg-opacity-10 rounded-2xl h-[18rem] w-[23rem] align-middle text-white">
               <div className="flex flex-col mt-[45px]">
               <h1 className="font-bold content-center text-[50px]">
                 {weatherInfoObject?.current_weather.temperature} {weatherInfoObject?.hourly_units.temperature_2m}
@@ -222,12 +222,11 @@ const App = () => {
           </div>}
         </div>
       </section>
-      <div id="about" className="h-screen bg-[rgb(20,20,20)] text-white font-bold text-center w-full md:max-w-[900px] flex flex-col justify-center items-center">
-          <h1 className="text-8xl">About</h1>
-          <img src={BG} className="h-full w-full rounded-md opacity-20 absolute md:max-w-[900px]"/>
-          <h2 className="font-thin text-3xl">Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
+      <div id="about" className="h-screen bg-cover bg-opacity-30 bg-[url(/Users/krinjmaster/Desktop/weather-app-react-ts-tw/public/assets/Brookhaven_Village.jpg)] md:max-w-[80vw] text-white font-bold text-center w-full flex flex-col justify-center items-center">
+          <h1 className="text-8xl z-50 backdrop-blur-sm rounded-xl 2xl:backdrop-blur-md">About</h1>
+          <h2 className="text-3xl z-50 font-bold backdrop-blur-sm rounded 2xl:backdrop-blur-md">Provider of weather forecasts, content and data based in Brookhaven, Georgia. The company offers up-to-date weather information and localized forecasts to people through television, online, mobile and tablet screens.</h2>
       </div>
-      <div id="history" className="h-screen text-white font-bold text-center w-full md:max-w-[900px] flex flex-col px-5 justify-center items-center">
+      <div id="history" className="h-screen text-white font-bold text-center w-full md:max-w-[90vw] flex flex-col px-5 justify-center items-center">
           <h1 className="text-8xl">History</h1>
           <h2 className="font-thin text-xl">Once upon a time, in a small town nestled in the foothills of a mountain range, there lived a young man named Alex. Alex had always been fascinated by the weather, and he spent countless hours studying meteorology and tracking weather patterns.
             One day, as he was walking home from his job at a local hardware store, Alex noticed that the sky was turning dark and ominous. He knew that a storm was brewing, but he had no way of knowing how severe it would be or when it would hit.
@@ -235,27 +234,27 @@ const App = () => {
             He spent months researching and developing his idea, pouring all of his time and energy into creating a weather forecasting system that would be both reliable and accessible. He worked tirelessly, often staying up late into the night, tweaking and refining his algorithms until they were as accurate as possible.
             Finally, after months of hard work, Alex launched his company. He called it "Krinj Forecast," and it quickly became a sensation. People all over the world were amazed by the accuracy of his forecasts, and soon, Krinj Forecast was the go-to source for weather information.</h2>
       </div>
-      <div id="crew" className="h-screen text-white font-bold text-center w-full md:max-w-[900px]">
+      <div id="crew" className="h-screen text-white font-bold text-center w-full md:max-w-[90vw]">
           <h1 className="text-8xl mt-5">Our workers:</h1>
-          <div className="flex gap-3 align-middle justify-center h-full mt-[25vh]" >
+          <div className="flex gap-3 justify-center h-full mt-[25vh]" >
             <div className="flex flex-col items-center">
-              <img src={Worker1} className="w-32 rounded-lg"/>
+              <img src={Worker1} className="w-[135px] rounded-lg"/>
               <h1 className="mt-1">Peter Parker</h1>
               <h1 className="font-thin">Programmer</h1>
             </div>
             <div className="flex flex-col items-center">
-              <img src={Worker2} className="w-40 rounded-lg"/>
+              <img src={Worker3} className="w-[145px] rounded-lg"/>
               <h1 className="mt-1">James Charles</h1>
               <h1 className="font-thin">Designer</h1>
             </div>
             <div className="flex flex-col items-center">
-              <img src={Worker3} className="w-[120px] rounded-lg"/>
+              <img src={Worker2} className="w-[180px] rounded-lg"/>
               <h1 className="mt-1">Alex White</h1>
               <h1 className="font-thin">CEO</h1>
             </div>
           </div>
       </div>
-      <div id="contacts" className="h-screen text-white font-bold text-center w-full md:max-w-[900px] flex flex-col justify-center items-center">
+      <div id="contacts" className="h-screen text-white font-bold text-center w-full md:max-w-[90vw] flex flex-col justify-center items-center">
         <div className="m-auto">
           <h1 className="text-8xl">Contacts:</h1>
           <div className="flex gap-5 justify-center">
